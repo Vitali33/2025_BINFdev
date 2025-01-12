@@ -31,9 +31,9 @@ outprefix=opt$outprefix
 
 testing="Y"
 if (testing == "Y"){
-  sampleInput="sampleData.csv"
-  geneInput="geneFunctions.csv"
-  annoInput="annoData.csv"
+  sampleInput="data/sampleData.csv"
+  geneInput="data/geneFunctions.csv"
+  annoInput="data/annoData.csv"
   outprefix="test"
 }
 
@@ -48,6 +48,8 @@ if (is.null(sampleInput)){
 ## READ IN FILES##
 ################################################
 ################################################
+setwd("./")
+
 sampleData=read.csv(sampleInput,row.names=1)
 annoData=read.csv(annoInput,row.names=1)
 geneFunctions=read.csv(geneInput,row.names=1)
@@ -74,9 +76,37 @@ annoColors <- list(
 ################################################
 ################################################
 
+pdf(paste0("basic_heatmap_", outprefix, ".pdf"))
+pheatmap(
+  sampleData,
+  clustering_distance_rows = "euclidean",
+  clustering_distance_cols = "euclidean",
+  clustering_method = "ward.D",
+  main = "Basic Heatmap",
+  fontsize_row = 6,
+  fontsize_col = 6
+)
+dev.off()
 
 ################################################
 ################################################
-## Create a basic heatmap##
+## Create a complex heatmap##
 ################################################
 ################################################
+
+pdf(paste0("complex_heatmap_", outprefix, ".pdf")) 
+pheatmap(
+  sampleData,
+  annotation_col = annoData,      # Add annotation for columns
+  annotation_colors = annoColors, # Use predefined colors
+  clustering_distance_rows = "euclidean",
+  clustering_distance_cols = "euclidean",
+  clustering_method = "ward.D",
+  show_rownames = FALSE,   # Hide row names
+  show_colnames = FALSE,   # Hide column names
+  legend_breaks = c(min(sampleData), mean(sampleData), max(sampleData)), 
+  legend_labels = c("Low", "Medium", "High"),
+  main = "Complex Heatmap"
+)
+
+dev.off()
